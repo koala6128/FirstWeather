@@ -16,7 +16,7 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        android:background="#40d7e8">
+        android:background="#5fe2f1">
 
 
         <TextView
@@ -53,23 +53,23 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="230dp">
+            android:layout_marginTop="220dp">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:id="@+id/wind_name"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:text="风速"/>
+                android:text="东南风"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:text="相对湿度"
-                />
+                android:text="相对湿度" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -82,7 +82,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="260dp">
+            android:layout_marginTop="250dp">
 
             <TextView
                 android:layout_width="0dp"
@@ -90,28 +90,25 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:id="@+id/wind_value"
-                android:textSize="20sp"
-                android:text="东南风 2级"/>
+                android:textSize="30sp"
+                android:text="2级"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_weight="1"
                 android:id="@+id/wet_value"
-                android:textSize="20sp"
-                android:text="87%"
-                />
+                android:textSize="30sp"
+                android:text="87%" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:id="@+id/air_value"
-                android:textSize="20sp"
+                android:textSize="30sp"
                 android:text="良"/>
         </LinearLayout>
-
-
     </RelativeLayout>
 
     <LinearLayout
@@ -123,19 +120,148 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
             android:layout_weight="1">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/today_image"/>
+                android:id="@+id/today_image"
+                android:src="@drawable/logo"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="25sp"
+                android:gravity="center"
+                android:text="今天"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:id="@+id/today_weather_des"
+                android:textSize="25sp"
+                android:gravity="center"
+                android:text="多云转阴"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/today_weather_high_temp"
+                android:textSize="30sp"
+                android:gravity="right"
+                android:text="28"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="今天"/>
-
+                android:textSize="30sp"
+                android:text="/"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/today_weather_low_temp"
+                android:textSize="30sp"
+                android:gravity="left"
+                android:text="21"
+                android:textColor="#4a72ec"/>
         </LinearLayout>
 
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tomorrow_image"
+                android:src="@drawable/logo"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="25sp"
+                android:gravity="center"
+                android:text="今天"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:id="@+id/tomorrow_weather_des"
+                android:textSize="25sp"
+                android:gravity="center"
+                android:text="多云转阴"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/tomorrow_weather_high_temp"
+                android:textSize="30sp"
+                android:gravity="right"
+                android:text="28"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:text="/"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/tomorrow_weather_low_temp"
+                android:textSize="30sp"
+                android:gravity="left"
+                android:text="21"
+                android:textColor="#4a72ec"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/after_tomorrow_image"
+                android:src="@drawable/logo"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="25sp"
+                android:gravity="center"
+                android:text="今天"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:id="@+id/after_tomorrow_weather_des"
+                android:textSize="25sp"
+                android:gravity="center"
+                android:text="多云转阴"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/after_tomorrow_weather_high_temp"
+                android:textSize="30sp"
+                android:gravity="right"
+                android:text="28"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:text="/"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/after_tomorrow_weather_low_temp"
+                android:textSize="30sp"
+                android:gravity="left"
+                android:text="21"
+                android:textColor="#4a72ec"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
