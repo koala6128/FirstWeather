@@ -4,17 +4,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.system.ErrnoException;
 import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.lx.firstweather.model.City;
 import com.example.lx.firstweather.model.Weather;
-import com.example.lx.firstweather.util.Singleton;
+import com.example.lx.firstweather.tools.Singleton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

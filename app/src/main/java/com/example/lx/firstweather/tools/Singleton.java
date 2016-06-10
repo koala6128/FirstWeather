@@ -1,4 +1,4 @@
-package com.example.lx.firstweather.util;
+package com.example.lx.firstweather.tools;
 
 import android.content.Context;
 import android.graphics.Bitmap;
