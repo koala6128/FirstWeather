@@ -10,12 +10,15 @@ import android.widget.Toast;
 import com.example.lx.firstweather.db.FirstWeatherDB;
 import com.example.lx.firstweather.model.City;
 import com.example.lx.firstweather.model.Weather;
+import com.example.lx.firstweather.tools.QueryWeather;
 import com.example.lx.firstweather.ui.Detail_fragment;
 import com.example.lx.firstweather.ui.Summary_fragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private FirstWeatherDB firstWeatherDB;
+    private QueryWeather queryWeather;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,5 +40,13 @@ public class MainActivity extends AppCompatActivity {
         Log.d("TEST", "begin load city");
         City city = firstWeatherDB.loadCitybyName("无锡");
         Log.d("TEST", "code of 无锡 is: " + city.getCity_code());
+
+        queryWeather = new QueryWeather(this, city.getCity_code(), 3);
+        Log.d("TEST", "begin query weather");
+        queryWeather.queryWeatherInfo();
+        Log.d("TEST", "begin to show");
+        Log.d("TEST", "aqi of " + city.getCity_name() + "is " + queryWeather.getAqi().getAqi());
+        Log.d("TEST", "now tmp of " + city.getCity_name() + "is " + queryWeather.getNow().getTmp());
+        Log.d("TEST", "tomorrow weather of " + city.getCity_name() + "is " + queryWeather.getDaily_forecasts()[1].getTxt_d());
     }
 }

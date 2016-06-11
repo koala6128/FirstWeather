@@ -112,6 +112,7 @@ public class FirstWeatherDB {
                 Log.d("Json", "query_city_ERROR");
             }
         });
+        request.setTag("query city");
         Singleton.getInstance(mContext.getApplicationContext()).addToRequestQueue(request);
 
         return city;
@@ -178,6 +179,7 @@ public class FirstWeatherDB {
 
             }
         });
+        request.setTag("query weather");
         Singleton.getInstance(mContext.getApplicationContext()).addToRequestQueue(request);
         return weather;
     }
