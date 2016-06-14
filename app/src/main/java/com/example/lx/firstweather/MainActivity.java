@@ -34,19 +34,23 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
 
         firstWeatherDB = FirstWeatherDB.getInstance(this);
-        Log.d("TEST", "begin load weather");
+        //firstWeatherDB.initDB();
+        //Log.d("TEST", "begin load weather");
         Weather weather = firstWeatherDB.loadWeatherbyCode("102");
         Log.d("TEST", "weather of 102 is: " + weather.getWeather_des());
+
         Log.d("TEST", "begin load city");
         City city = firstWeatherDB.loadCitybyName("无锡");
         Log.d("TEST", "code of 无锡 is: " + city.getCity_code());
 
-        queryWeather = new QueryWeather(this, city.getCity_code(), 3);
+       // firstWeatherDB.loadAllCity();
+
+        /*queryWeather = new QueryWeather(this, city.getCity_code(), 3);
         Log.d("TEST", "begin query weather");
         queryWeather.queryWeatherInfo();
         Log.d("TEST", "begin to show");
         Log.d("TEST", "aqi of " + city.getCity_name() + "is " + queryWeather.getAqi().getAqi());
         Log.d("TEST", "now tmp of " + city.getCity_name() + "is " + queryWeather.getNow().getTmp());
-        Log.d("TEST", "tomorrow weather of " + city.getCity_name() + "is " + queryWeather.getDaily_forecasts()[1].getTxt_d());
+        Log.d("TEST", "tomorrow weather of " + city.getCity_name() + "is " + queryWeather.getDaily_forecasts()[1].getTxt_d());*/
     }
 }
