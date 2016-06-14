@@ -65,7 +65,8 @@ public class QueryWeather {
     }
 
     public void setAqi(JSONObject object) {
-        AQI aqi = null;
+        AQI aqi = new AQI();
+        Log.d("TEST", "saving AQI");
         try {
             aqi.setAqi(object.getJSONObject("city").getString("aqi"));
             aqi.setCo(object.getJSONObject("city").getString("co"));
@@ -83,7 +84,8 @@ public class QueryWeather {
     }
 
     public void setNow(JSONObject object) {
-        NOW now = null;
+        NOW now = new NOW();
+        Log.d("TEST", "saving Now");
         try {
             now.setCode(object.getJSONObject("cond").getString("code"));
             now.setTxt(object.getJSONObject("cond").getString("txt"));
@@ -106,6 +108,8 @@ public class QueryWeather {
         Daily_forecast[] daily_forecasts = new Daily_forecast[day_number];
         try {
             for (int i = 0; i < daily_forecasts.length; i++){
+                daily_forecasts[i] = new Daily_forecast();
+                Log.d("TEST", "saving daily " + i);
                 daily_forecasts[i].setSr(jsonArray.getJSONObject(i).getJSONObject("astro").getString("sr"));
                 daily_forecasts[i].setSs(jsonArray.getJSONObject(i).getJSONObject("astro").getString("ss"));
                 daily_forecasts[i].setCode_d(jsonArray.getJSONObject(i).getJSONObject("cond").getString("code_d"));
