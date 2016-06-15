@@ -91,14 +91,6 @@ public class FirstWeatherDB {
             city.setLon(cursor.getColumnName(cursor.getColumnIndex("lon")));
             Singleton.getInstance(mContext.getApplicationContext()).getRequestQueue().cancelAll("query city");
 
-        }else {
-            //从网络查询
-            //Log.d("TEST", "load city from server");
-            //city = queryCityFromServer(name);
-            //queryCityFromServer();
-            //Log.d("TEST", "load city from server DONE");
-            //loadCitybyName(name);
-            //Singleton.getInstance(mContext.getApplicationContext()).getRequestQueue().cancelAll("query city");
         }
         cursor.close();
         return city;

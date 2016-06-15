@@ -1,12 +1,14 @@
-package com.example.lx.firstweather.tools;
+package com.example.lx.firstweather.model;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.lx.firstweather.R;
 import com.example.lx.firstweather.model.AQI;
 import com.example.lx.firstweather.model.Daily_forecast;
 import com.example.lx.firstweather.model.NOW;
@@ -14,55 +16,19 @@ import com.example.lx.firstweather.model.NOW;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import butterknife.BindView;
+
 /**
  * Created by koala on 2016/6/11.
  */
-public class QueryWeather {
+public class WeatherInfo {
 
-    private static final String adress = "https://api.heweather.com/x3/weather?cityid=";
-    private static final String key = "0b2a5de562144ab481b4e4a02adfe4f3";
-    private static final String TAG = "Query Weather Info";
-    //private QueryWeather queryWeather;
-    private String city_code;   //待查询天气的城市代码
-    private int day_number;     //预报的天数 （7天内）
-    private Context mContext;
+
     private AQI aqi;        //空气质量
     private NOW now;        //当前天气
     private Daily_forecast[] daily_forecasts;   //天气预报
 
-    public QueryWeather(Context context, String code, int number){
-       // queryWeatherInfo(code);
-        city_code = code;
-        mContext = context;
-        day_number = number;
-    }
 
-
-    public void queryWeatherInfo(){
-        String url = adress + city_code + "&key=" + key;
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONArray jsonArray = response.getJSONArray("HeWeather data service 3.0");
-                    setAqi(jsonArray.getJSONObject(0).getJSONObject("aqi"));
-                    setNow(jsonArray.getJSONObject(0).getJSONObject("now"));
-                    setDaily_forecasts(jsonArray.getJSONObject(0).getJSONArray("daily_forecast"));
-
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("TEST", "ERROR in queryWeatherInfo");
-            }
-        });
-
-        request.setTag(TAG);
-        Singleton.getInstance(mContext.getApplicationContext()).addToRequestQueue(request);
-    }
 
     public void setAqi(JSONObject object) {
         AQI aqi = new AQI();
@@ -76,6 +42,7 @@ public class QueryWeather {
             aqi.setPm25(object.getJSONObject("city").getString("pm25"));
             aqi.setQlty(object.getJSONObject("city").getString("qlty"));
             aqi.setSo2(object.getJSONObject("city").getString("so2"));
+
         }catch (Exception e){
             e.printStackTrace();
             Log.d("TEST", "ERROR in set aqi");
@@ -105,7 +72,7 @@ public class QueryWeather {
     }
 
     public void setDaily_forecasts(JSONArray jsonArray) {
-        Daily_forecast[] daily_forecasts = new Daily_forecast[day_number];
+        Daily_forecast[] daily_forecasts = new Daily_forecast[7];
         try {
             for (int i = 0; i < daily_forecasts.length; i++){
                 daily_forecasts[i] = new Daily_forecast();
