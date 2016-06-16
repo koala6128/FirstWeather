@@ -1,5 +1,6 @@
 package com.example.lx.firstweather;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.lx.firstweather.db.FirstWeatherDB;
 import com.example.lx.firstweather.model.City;
@@ -21,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URL;
+import java.security.PublicKey;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,6 +45,18 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.wet_value) TextView now_wet;
     @BindView(R.id.air_value) TextView aqi_aqi;
     @BindView(R.id.today_image) ImageView today_image;
+    @BindView(R.id.today_weather_des) TextView today_weather_des;
+    @BindView(R.id.today_weather_high_temp) TextView today_high;
+    @BindView(R.id.today_weather_low_temp) TextView today_low;
+    @BindView(R.id.tomorrow_image) ImageView tomorrow_image;
+    @BindView(R.id.tomorrow_weather_des) TextView tomorrow_weather_des;
+    @BindView(R.id.tomorrow_weather_high_temp) TextView tomorrow_high;
+    @BindView(R.id.tomorrow_weather_low_temp) TextView tomorrow_low;
+    @BindView(R.id.after_tomorrow_image) ImageView after_image;
+    @BindView(R.id.after_tomorrow_weather_des) TextView after_weather_des;
+    @BindView(R.id.after_tomorrow_weather_high_temp) TextView after_high;
+    @BindView(R.id.after_tomorrow_weather_low_temp) TextView after_low;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,18 +116,15 @@ public class MainActivity extends AppCompatActivity {
                     weatherInfo.setNow(jsonArray.getJSONObject(0).getJSONObject("now"));
                     weatherInfo.setDaily_forecasts(jsonArray.getJSONObject(0).getJSONArray("daily_forecast"));
 
-                    now_temp.setText(weatherInfo.getNow().getTmp());
-                    now_weather.setText(weatherInfo.getNow().getTxt());
-                    now_wind_name.setText(weatherInfo.getNow().getDir());
-                    now_wind_value.setText(weatherInfo.getNow().getSc());
-                    now_wet.setText(weatherInfo.getNow().getHum() + "%");
-                    aqi_aqi.setText(weatherInfo.getAqi().getQlty());
+                    setCurrentWeather(weatherInfo);
 
                     //URL today_url = new URL(firstWeatherDB.loadWeatherbyCode(weatherInfo.getDaily_forecasts()[0].getCode_d()).getWeather_code());
                     //Log.d("TEST", today_url.toString());
                     //today_image.setImageURI(today_url);
 
-                    
+                    setForecast(weatherInfo);
+
+                    setWeatherImage(weatherInfo);
 
                 }catch (Exception e){
                     e.printStackTrace();
@@ -130,6 +142,95 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void setCurrentWeather(WeatherInfo weatherInfo){
+        now_temp.setText(weatherInfo.getNow().getTmp());
+        now_weather.setText(weatherInfo.getNow().getTxt());
+        now_wind_name.setText(weatherInfo.getNow().getDir());
+        now_wind_value.setText(weatherInfo.getNow().getSc() + "级");
+        now_wet.setText(weatherInfo.getNow().getHum() + "%");
+        aqi_aqi.setText(weatherInfo.getAqi().getQlty());
+    }
 
+    public void setForecast(WeatherInfo weatherInfo){
+
+
+        today_weather_des.setText(weatherInfo.getDaily_forecasts()[0].getTxt_d());
+        today_high.setText(weatherInfo.getDaily_forecasts()[0].getMax());
+        today_low.setText(weatherInfo.getDaily_forecasts()[0].getMin());
+
+        tomorrow_weather_des.setText(weatherInfo.getDaily_forecasts()[1].getTxt_d());
+        tomorrow_high.setText(weatherInfo.getDaily_forecasts()[1].getMax());
+        tomorrow_low.setText(weatherInfo.getDaily_forecasts()[1].getMin());
+
+        after_weather_des.setText(weatherInfo.getDaily_forecasts()[2].getTxt_d());
+        after_high.setText(weatherInfo.getDaily_forecasts()[2].getMax());
+        after_low.setText(weatherInfo.getDaily_forecasts()[2].getMin());
+
+    }
+
+    public void setWeatherImage(WeatherInfo weatherInfo){
+
+        String todayWeatherCode;
+        String tomorrowWeatherCode;
+        String aftertomorrowWeatherCode;
+        String icon_0;
+        String icon_1;
+        String icon_2;
+
+
+        todayWeatherCode = weatherInfo.getDaily_forecasts()[0].getCode_d();
+        tomorrowWeatherCode = weatherInfo.getDaily_forecasts()[1].getCode_d();
+        aftertomorrowWeatherCode = weatherInfo.getDaily_forecasts()[2].getCode_d();
+
+        icon_0 = firstWeatherDB.loadWeatherbyCode(todayWeatherCode).getWeather_icon();
+        Log.d("TEST", "icon is:" + icon_0);
+        icon_1 = firstWeatherDB.loadWeatherbyCode(tomorrowWeatherCode).getWeather_icon();
+        icon_2 = firstWeatherDB.loadWeatherbyCode(aftertomorrowWeatherCode).getWeather_icon();
+
+
+        ImageRequest imageRequest_0 = new ImageRequest(icon_0, new Response.Listener<Bitmap>() {
+            @Override
+            public void onResponse(Bitmap response) {
+                today_image.setImageBitmap(response);
+
+            }
+        }, 0, 0, null, null, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        ImageRequest imageRequest_1 = new ImageRequest(icon_1, new Response.Listener<Bitmap>() {
+            @Override
+            public void onResponse(Bitmap response) {
+                tomorrow_image.setImageBitmap(response);
+
+            }
+        }, 0, 0, null, null, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        ImageRequest imageRequest_2 = new ImageRequest(icon_2, new Response.Listener<Bitmap>() {
+            @Override
+            public void onResponse(Bitmap response) {
+                after_image.setImageBitmap(response);
+
+            }
+        }, 0, 0, null, null, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        Singleton.getInstance(this.getApplicationContext()).addToRequestQueue(imageRequest_0);
+        Singleton.getInstance(this.getApplicationContext()).addToRequestQueue(imageRequest_1);
+        Singleton.getInstance(this.getApplicationContext()).addToRequestQueue(imageRequest_2);
+
+    }
 }
 

@@ -87,7 +87,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:id="@+id/wind_value"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:text="2级"/>
             <TextView
                 android:layout_width="0dp"
@@ -95,7 +95,7 @@
                 android:gravity="center"
                 android:layout_weight="1"
                 android:id="@+id/wet_value"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:text="87%" />
             <TextView
                 android:layout_width="0dp"
@@ -103,7 +103,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:id="@+id/air_value"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:text="良"/>
         </LinearLayout>
     </RelativeLayout>
