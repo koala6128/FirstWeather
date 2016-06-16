@@ -1,34 +1,16 @@
 package com.example.lx.firstweather.model;
 
-import android.content.Context;
 import android.util.Log;
-import android.widget.TextView;
-
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.lx.firstweather.R;
-import com.example.lx.firstweather.model.AQI;
-import com.example.lx.firstweather.model.Daily_forecast;
-import com.example.lx.firstweather.model.NOW;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import butterknife.BindView;
 
 /**
  * Created by koala on 2016/6/11.
  */
 public class WeatherInfo {
-
-
     private AQI aqi;        //空气质量
     private NOW now;        //当前天气
     private Daily_forecast[] daily_forecasts;   //天气预报
-
-
 
     public void setAqi(JSONObject object) {
         AQI aqi = new AQI();

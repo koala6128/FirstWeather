@@ -32,11 +32,16 @@ public class MainActivity extends AppCompatActivity {
 
     private FirstWeatherDB firstWeatherDB;
     private WeatherInfo weatherInfo;
-    //private WeatherInfo queryWeather;
-
     private String CITY_NAME;
     private String CITY_CODE;
-    private City city;
+    private String WEATHER_ICON;
+
+    String KEY = "0b2a5de562144ab481b4e4a02adfe4f3";
+    String CITY_URL = "https://api.heweather.com/x3/citylist?search=";
+    String CITY_TYPE = "allchina";
+    String WEATHER_URL = "https://api.heweather.com/x3/condition?search=";
+    String WEATHER_TYPE = "allcond";
+    String address = "https://api.heweather.com/x3/weather?cityid=";
 
     @BindView(R.id.temp_value) TextView now_temp;
     @BindView(R.id.weather_value) TextView now_weather;
@@ -64,67 +69,133 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-/*        Detail_fragment detailFragment = new Detail_fragment();
-        Summary_fragment summaryFragment = new Summary_fragment();
-
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.fragment_container0, detailFragment);
-        transaction.add(R.id.fragment_container1, summaryFragment);
-        transaction.commit();*/
-
         CITY_NAME = "无锡";
-        CITY_CODE = "CN101190201";
 
         firstWeatherDB = FirstWeatherDB.getInstance(this);
         weatherInfo = new WeatherInfo();
-        //firstWeatherDB.initDB();
-        //Log.d("TEST", "begin load weather");
-        Weather weather = firstWeatherDB.loadWeatherbyCode("102");
-        Log.d("TEST", "weather of 102 is: " + weather.getWeather_des());
+
 
         Log.d("TEST", "begin load city");
-        City city = firstWeatherDB.loadCitybyName("无锡");
-        Log.d("TEST", "code of 无锡 is: " + city.getCity_code());
+        CITY_CODE = firstWeatherDB.loadCitybyName(CITY_NAME).getCity_code();
+        if (CITY_CODE != null){
+            Log.d("TEST", "city In DB");
+            queryWeatherInfo();
 
-        queryWeatherInfo();
-        //now_temp.setText(weatherInfo.getNow().getTmp());
-        // firstWeatherDB.loadAllCity();
+        }else {
+            Log.d("TEST", "city From Server");
+            queryCity();
+            queryWeatherInfo();
+        }
 
-/*        queryWeather = new WeatherInfo(this, city.getCity_code(), 3);
-        Log.d("TEST", "begin query weather");
-        queryWeather.queryWeatherInfo();
+        Log.d("TEST", "CODE-1 is: " + CITY_CODE);
 
-        Log.d("TEST", "begin to show");*/
-//        Log.d("TEST", "aqi of " + city.getCity_name() + "is " + queryWeather.getAqi().getAqi());
-        //Log.d("TEST", "now tmp of " + city.getCity_name() + "is " + queryWeather.getNow().getTmp());
-        //Log.d("TEST", "tomorrow weather of " + city.getCity_name() + "is " + queryWeather.getDaily_forecasts()[1].getTxt_d());
     }
 
+    //从网络查询城市信息
+    public void queryCity(){
+        String url = CITY_URL + CITY_TYPE + "&key=" + KEY;
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    if (response.getString("status") .equals("ok")){
+                        JSONArray city_info = response.getJSONArray("city_info");
+                        for (int i = 0; i < city_info.length(); i++) {
+                            JSONObject jsonObject = city_info.getJSONObject(i);
+                            if (jsonObject.getString("city") .equals(CITY_NAME)){
+                                City city = new City();
+                                city.setCity_name(jsonObject.getString("city"));
+                                city.setCity_code(jsonObject.getString("id"));
+                                city.setLat(jsonObject.getString("lat"));
+                                city.setLon(jsonObject.getString("lon"));
+                                city.setProvince(jsonObject.getString("prov"));
+                                firstWeatherDB.saveCity(city);
+                                CITY_CODE = jsonObject.getString("id");
+                                Log.d("TEST", "query_city_ok");
+                                Log.d("TEST", "CODE-2 is: " + CITY_CODE);
+                                break;
+                            }
+                        }
+                    }else {
+                        Log.d("TEST", "city status is NOT OK");
+                    }
+                }catch (Exception e){
+                    Log.d("TEST", "query_weather_EXCEPTION");
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("TEST", "query_city_ERROR");
+            }
+        });
+
+        Log.d("TEST", "request finish");
+
+        request.setTag("query city");
+        Singleton.getInstance(this.getApplicationContext()).addToRequestQueue(request);
+    }
+
+    //从网络查询各类天气
+    public void queryWeather(final String weather_code){
+        String url = WEATHER_URL + WEATHER_TYPE + "&key=" + KEY;
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    String status = response.getString("status");
+                    if (status .equals("ok")){
+                        Log.d("TEST", "weather status is OK");
+                        JSONArray cond_info = response.getJSONArray("cond_info");
+                        for (int i = 0; i < cond_info.length(); i++){
+                            JSONObject object = cond_info.getJSONObject(i);
+                            if(object.getString("code") .equals(weather_code)){
+                                Weather weather = new Weather();
+                                weather.setWeather_code(object.getString("code"));
+                                weather.setWeather_des(object.getString("txt"));
+                                weather.setWeather_icon(object.getString("icon"));
+                                firstWeatherDB.saveWeather(weather);
+                                WEATHER_ICON = object.getString("icon");
+                                Log.d("TEST", "query_weather_ok");
+                            }
+                        }
+
+                    }else {
+                        Log.d("TEST", "weather status is NOT OK");
+                    }
+                }catch (Exception e){
+                    Log.d("TEST", "query_weather_EXCEPTION");
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("TEST", "query_weather_ERROR");
+            }
+        });
+        request.setTag("query weather");
+        Singleton.getInstance(this.getApplicationContext()).addToRequestQueue(request);
+    }
+
+    //查询指定城市的天气信息
     public void queryWeatherInfo(){
-        String address = "https://api.heweather.com/x3/weather?cityid=";
-        String key = "0b2a5de562144ab481b4e4a02adfe4f3";
         String TAG = "Query Weather Info";
-        String url = address + CITY_CODE + "&key=" + key;
+        String url = address + CITY_CODE + "&key=" + KEY;
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray jsonArray = response.getJSONArray("HeWeather data service 3.0");
-                    Log.d("TEST", "query now temp is: " + jsonArray.getJSONObject(0).getJSONObject("now").getString("tmp"));
+                    //解析天气信息
                     weatherInfo.setAqi(jsonArray.getJSONObject(0).getJSONObject("aqi"));
                     weatherInfo.setNow(jsonArray.getJSONObject(0).getJSONObject("now"));
                     weatherInfo.setDaily_forecasts(jsonArray.getJSONObject(0).getJSONArray("daily_forecast"));
 
-                    setCurrentWeather(weatherInfo);
-
-                    //URL today_url = new URL(firstWeatherDB.loadWeatherbyCode(weatherInfo.getDaily_forecasts()[0].getCode_d()).getWeather_code());
-                    //Log.d("TEST", today_url.toString());
-                    //today_image.setImageURI(today_url);
-
-                    setForecast(weatherInfo);
-
-                    setWeatherImage(weatherInfo);
+                    setCurrentWeather(weatherInfo);     //加载当前天气信息
+                    setForecast(weatherInfo);           //加载天气预报
+                    setWeatherImage(weatherInfo);       //加载天气图片
 
                 }catch (Exception e){
                     e.printStackTrace();
@@ -153,7 +224,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void setForecast(WeatherInfo weatherInfo){
 
-
         today_weather_des.setText(weatherInfo.getDaily_forecasts()[0].getTxt_d());
         today_high.setText(weatherInfo.getDaily_forecasts()[0].getMax());
         today_low.setText(weatherInfo.getDaily_forecasts()[0].getMin());
@@ -173,64 +243,50 @@ public class MainActivity extends AppCompatActivity {
         String todayWeatherCode;
         String tomorrowWeatherCode;
         String aftertomorrowWeatherCode;
-        String icon_0;
-        String icon_1;
-        String icon_2;
-
 
         todayWeatherCode = weatherInfo.getDaily_forecasts()[0].getCode_d();
         tomorrowWeatherCode = weatherInfo.getDaily_forecasts()[1].getCode_d();
         aftertomorrowWeatherCode = weatherInfo.getDaily_forecasts()[2].getCode_d();
 
-        icon_0 = firstWeatherDB.loadWeatherbyCode(todayWeatherCode).getWeather_icon();
-        Log.d("TEST", "icon is:" + icon_0);
-        icon_1 = firstWeatherDB.loadWeatherbyCode(tomorrowWeatherCode).getWeather_icon();
-        icon_2 = firstWeatherDB.loadWeatherbyCode(aftertomorrowWeatherCode).getWeather_icon();
+        setImage(todayWeatherCode, today_image);
+        setImage(tomorrowWeatherCode, tomorrow_image);
+        setImage(aftertomorrowWeatherCode, after_image);
+    }
 
+    public void setImage(String code, final ImageView imageView){
+        ImageRequest imageRequest;
+        String icon = firstWeatherDB.loadWeatherbyCode(code).getWeather_icon();
+        if (icon != null){
+            Log.d("TEST", "icon In DB");
+            imageRequest = new ImageRequest(icon, new Response.Listener<Bitmap>() {
+                @Override
+                public void onResponse(Bitmap response) {
+                    imageView.setImageBitmap(response);
 
-        ImageRequest imageRequest_0 = new ImageRequest(icon_0, new Response.Listener<Bitmap>() {
-            @Override
-            public void onResponse(Bitmap response) {
-                today_image.setImageBitmap(response);
+                }
+            }, 0, 0, null, null, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("TEST", "request image ERROR");
+                }
+            });
+        }else {
+            Log.d("TEST", "icon from server");
+            queryWeather(code);
+            imageRequest = new ImageRequest(WEATHER_ICON, new Response.Listener<Bitmap>() {
+                @Override
+                public void onResponse(Bitmap response) {
+                    imageView.setImageBitmap(response);
 
-            }
-        }, 0, 0, null, null, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-
-        ImageRequest imageRequest_1 = new ImageRequest(icon_1, new Response.Listener<Bitmap>() {
-            @Override
-            public void onResponse(Bitmap response) {
-                tomorrow_image.setImageBitmap(response);
-
-            }
-        }, 0, 0, null, null, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-
-        ImageRequest imageRequest_2 = new ImageRequest(icon_2, new Response.Listener<Bitmap>() {
-            @Override
-            public void onResponse(Bitmap response) {
-                after_image.setImageBitmap(response);
-
-            }
-        }, 0, 0, null, null, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-
-        Singleton.getInstance(this.getApplicationContext()).addToRequestQueue(imageRequest_0);
-        Singleton.getInstance(this.getApplicationContext()).addToRequestQueue(imageRequest_1);
-        Singleton.getInstance(this.getApplicationContext()).addToRequestQueue(imageRequest_2);
-
+                }
+            }, 0, 0, null, null, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("TEST", "request image ERROR");
+                }
+            });
+        }
+        Singleton.getInstance(this.getApplicationContext()).addToRequestQueue(imageRequest);
     }
 }
 
