@@ -1,8 +1,9 @@
 package com.example.lx.firstweather.ui;
 
-import android.app.Fragment;
+
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +39,7 @@ public class CityWeather_fragment extends Fragment {
 
     private FirstWeatherDB firstWeatherDB;
     private WeatherInfo weatherInfo;
+    private static String ARG_NAME = "arg_name";
     private String CITY_NAME;
     private String CITY_CODE;
     private String WEATHER_ICON;
@@ -54,36 +56,46 @@ public class CityWeather_fragment extends Fragment {
     String WEATHER_TYPE = "allcond";
     String address = "https://api.heweather.com/x3/weather?cityid=";
 
+    //实时天气
+    @BindView(R.id.position_value) TextView city_name;
     @BindView(R.id.temp_value) TextView now_temp;
     @BindView(R.id.weather_value) TextView now_weather;
     @BindView(R.id.wind_name) TextView now_wind_name;
     @BindView(R.id.wind_value) TextView now_wind_value;
     @BindView(R.id.wet_value) TextView now_wet;
     @BindView(R.id.air_value) TextView aqi_aqi;
+    //今天的天气情况
     @BindView(R.id.today_image) ImageView today_image;
     @BindView(R.id.today_weather_des) TextView today_weather_des;
     @BindView(R.id.today_weather_high_temp) TextView today_high;
     @BindView(R.id.today_weather_low_temp) TextView today_low;
+    //明天的天气情况
     @BindView(R.id.tomorrow_image) ImageView tomorrow_image;
     @BindView(R.id.tomorrow_weather_des) TextView tomorrow_weather_des;
     @BindView(R.id.tomorrow_weather_high_temp) TextView tomorrow_high;
     @BindView(R.id.tomorrow_weather_low_temp) TextView tomorrow_low;
+    //后天的天气情况
     @BindView(R.id.after_tomorrow_image) ImageView after_image;
     @BindView(R.id.after_tomorrow_weather_des) TextView after_weather_des;
     @BindView(R.id.after_tomorrow_weather_high_temp) TextView after_high;
     @BindView(R.id.after_tomorrow_weather_low_temp) TextView after_low;
+    //下拉刷新布局
     @BindView(R.id.ptr_frame_layout) PtrFrameLayout ptrFrameLayout;
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
         View view = inflater.inflate(R.layout.city_weather_fragment, container, false);
         ButterKnife.bind(this, view);
-        CITY_NAME = "无锡";
+       // CITY_NAME = "无锡";
+        CITY_NAME = getArguments().getString(ARG_NAME);
+        city_name.setText(CITY_NAME);
+
 
         firstWeatherDB = FirstWeatherDB.getInstance(getActivity().getApplicationContext());
         weatherInfo = new WeatherInfo();
 
+        Log.d("TEST", "CITY NAME is: " + CITY_NAME);
         Log.d("TEST", "begin load city");
         CITY_CODE = firstWeatherDB.loadCitybyName(CITY_NAME).getCity_code();
         if (CITY_CODE != null){
@@ -113,6 +125,15 @@ public class CityWeather_fragment extends Fragment {
         return view;
     }
 
+    public static CityWeather_fragment create(String pass_name){
+        CityWeather_fragment fragment = new CityWeather_fragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_NAME, pass_name);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public CityWeather_fragment(){}
 
     //从网络查询城市信息
     public void queryCity(){
